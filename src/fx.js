@@ -1,3 +1,5 @@
+export const log = console.log;
+
 export function filter(f, iter) {
   const res = [];
   for (const a of iter) {
