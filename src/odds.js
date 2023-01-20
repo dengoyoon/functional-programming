@@ -20,4 +20,4 @@ function* odds(num) {
 }
 
 // for (const a of odds(40)) console.log(a);
-console.log(...odds(20));
+console.log(...odds(21));
