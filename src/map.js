@@ -1,3 +1,5 @@
+/* 이터러블 프로토콜을 따른 map 함수 */
+
 function map(f, iter) {
   const res = [];
   for (const a of iter) {
