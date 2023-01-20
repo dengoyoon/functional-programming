@@ -8,7 +8,8 @@ function* infinity(i = 0) {
 
 function* limit(num, iter) {
   for (const v of iter) {
-    if (v <= num) yield v;
+    yield v;
+    if (v === num) return;
   }
 }
 
@@ -18,12 +19,5 @@ function* odds(num) {
   }
 }
 
-const oddsIter = odds(7);
-console.log(oddsIter.next());
-console.log(oddsIter.next());
-console.log(oddsIter.next());
-console.log(oddsIter.next());
-console.log(oddsIter.next());
-console.log(oddsIter.next());
-console.log(oddsIter.next());
-console.log(oddsIter.next());
+// for (const a of odds(40)) console.log(a);
+console.log(...odds(20));
