@@ -1,4 +1,4 @@
-import { log, map, reduce, filter } from "./src/fx.js";
+import { log, map, reduce, filter, go, pipe } from "./src/fx.js";
 
 const products = [
   { name: "반팔티", price: 15000 },
@@ -10,13 +10,20 @@ const products = [
 
 const add = (a, b) => a + b;
 
-// 오른쪽에서 왼쪽으로 읽으면 자연스레 읽힌다.
-log(
-  reduce(
-    add,
-    map(
-      (a) => a.price,
-      filter((p) => p.price < 20000, products)
-    )
-  )
+// go를 사용하여 읽기 좋은 코드로 변경
+// go를 사용하지 않으면 오른쪽에서 왼쪽으로 코드를 읽어야 이해가 되는 코드가 된다.
+go(
+  products,
+  filter((p) => p.price < 20000),
+  map((a) => a.price),
+  reduce(add),
+  log
+);
+
+go(
+  products,
+  filter((p) => p.price >= 20000),
+  map((a) => a.price),
+  reduce(add),
+  log
 );
