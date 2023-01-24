@@ -41,7 +41,9 @@ export const map = curry((f, iter) => {
 });
 
 // range와 지연된 range의 차이 : 배열과 이터레이터로 반환되는 것.
-// 지연된 range는 이터러블이 순회될 때서야 내부 로직이 실행된다.
+// 지연된 range는 이터러블이 순회될 때서야 내부 로직이 실행된다. 배열을 만든다는 개념이 아니고 순회될때마다 값을 배출하는 방식.
+// 즉 배열이 미리 만들어져있지 않아도 된다는 차이가 있다.
+// reduce(add, range(100000)), reduce(add, L.range(100000)) 둘 중 지연된 range의 사용이 훨씬 빠르다.
 export const range = (length) => {
   let i = -1;
   const res = [];
