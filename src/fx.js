@@ -40,6 +40,25 @@ export const map = curry((f, iter) => {
   return res;
 });
 
+// range와 지연된 range의 차이 : 배열과 이터레이터로 반환되는 것.
+// 지연된 range는 이터러블이 순회될 때서야 내부 로직이 실행된다.
+export const range = (length) => {
+  let i = -1;
+  const res = [];
+  while (++i < length) {
+    res.push(i);
+  }
+  return res;
+};
+
+const L = {};
+L.range = function* range(length) {
+  let i = -1;
+  while (++i < length) {
+    yield i;
+  }
+};
+
 // 코드를 값으로 다루어 표현력을 높이기 위한 함수 go, pipe, curry
 
 /* 
