@@ -18,22 +18,34 @@ const sum = curry((f, iter) => go(iter, map(f), reduce(add)));
 
 const total_quantity = sum((a) => a.quantity);
 
-log(total_quantity(products));
-
 const total_price = sum((a) => a.price * a.quantity);
-
-log(total_price(products));
 
 const base_total_price = (predi) => pipe(filter(predi), total_price);
 
-go(
-  products,
-  base_total_price((p) => p.price < 20000),
-  log
-);
-
-go(
-  products,
-  base_total_price((p) => p.price >= 20000),
-  log
-);
+document.querySelector("#cart").innerHTML = `
+  <table>
+    <tr>
+      <th>상품 이름</th>
+      <th>가격</th>
+      <th>수량</th>
+      <th>총 가격</th>
+    </tr>
+    <tr>
+      <td>반팔티</td>
+      <td>10000</td>
+      <td>3</td>
+      <td>30000</td>
+    </tr>
+    <tr>
+      <td>반팔티</td>
+      <td>10000</td>
+      <td>3</td>
+      <td>30000</td>
+    </tr>
+    <tr>
+      <td colspan="2">합계</td>
+      <td>6</td>
+      <td>60000</td>
+    </tr>
+  </table>
+`;
