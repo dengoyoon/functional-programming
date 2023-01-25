@@ -22,9 +22,9 @@ export const filter = curry((f, iter) => {
   return res;
 });
 
-L.filter = function* (f, iter) {
+L.filter = curry(function* (f, iter) {
   for (const a of iter) if (f(a)) yield a;
-};
+});
 
 export const reduce = curry((f, acc, iter) => {
   if (!iter) {
@@ -46,9 +46,9 @@ export const map = curry((f, iter) => {
   return res;
 });
 
-L.map = function* (f, iter) {
+L.map = curry(function* (f, iter) {
   for (const a of iter) yield f(a);
-};
+});
 
 // range와 지연된 range의 차이 : 배열과 이터레이터로 반환되는 것.
 // 지연된 range는 이터러블이 순회될 때서야 내부 로직이 실행된다. 배열을 만든다는 개념이 아니고 순회될때마다 값을 배출하는 방식.
