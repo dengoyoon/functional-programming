@@ -1,4 +1,4 @@
-import { log, map, reduce, filter, go, pipe, join } from "./fx.js";
+import { log, map, reduce, filter, go, pipe, join, L } from "./fx.js";
 
 // 데이터 객체를 쿼리 스트링으로 만들어보는 예제
 const data = {
@@ -8,8 +8,8 @@ const data = {
 };
 
 const queryStr = pipe(
-  Object.entries,
-  map(([k, v]) => `${k}=${v}`),
+  L.entries,
+  L.map(([k, v]) => `${k}=${v}`),
   join("&")
 );
 

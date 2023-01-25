@@ -78,9 +78,14 @@ export const take = curry((length, iter) => {
   }
 });
 
+// 객체지향적으로 구현된 기존의 Array.prototype.join 보다 훨씬 다형성이 높다는 것을 알 수 있다.
 export const join = curry((separator, iter) =>
   reduce((a, b) => `${a}${separator}${b}`, iter)
 );
+
+L.entries = function* (obj) {
+  for (const k in obj) yield [k, obj[k]];
+};
 
 // 코드를 값으로 다루어 표현력을 높이기 위한 함수 go, pipe, curry
 
