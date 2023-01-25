@@ -53,13 +53,21 @@ export const range = (length) => {
   return res;
 };
 
-const L = {};
+export const L = {};
 L.range = function* range(length) {
   let i = -1;
   while (++i < length) {
     yield i;
   }
 };
+
+export const take = curry((length, iter) => {
+  const res = [];
+  for (const a of iter) {
+    res.push(a);
+    if (res.length === length) return res;
+  }
+});
 
 // 코드를 값으로 다루어 표현력을 높이기 위한 함수 go, pipe, curry
 
