@@ -78,6 +78,10 @@ export const take = curry((length, iter) => {
   }
 });
 
+export const join = curry((separator, iter) =>
+  reduce((a, b) => `${a}${separator}${b}`, iter)
+);
+
 // 코드를 값으로 다루어 표현력을 높이기 위한 함수 go, pipe, curry
 
 /* 
