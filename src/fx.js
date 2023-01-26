@@ -70,6 +70,9 @@ L.range = function* range(length) {
   }
 };
 
+// reduce와 take는 결과를 위한 함수라고 보면 된다.
+// 예를 들어 바로 밑의 join함수는 reduce 계열에 의한 결과 도출함수라고 이해하면 되고
+// find함수의 경우엔 take 계열에 의한 결과 도출 함수라고 이해하면 된다.
 export const take = curry((length, iter) => {
   const res = [];
   for (const a of iter) {
@@ -86,6 +89,10 @@ export const join = curry((separator, iter) =>
 L.entries = function* (obj) {
   for (const k in obj) yield [k, obj[k]];
 };
+
+export const find = curry((f, iter) =>
+  go(iter, L.filter(f), take(1), ([a]) => a)
+);
 
 // 코드를 값으로 다루어 표현력을 높이기 위한 함수 go, pipe, curry
 
