@@ -2,6 +2,8 @@ export const log = console.log;
 
 export const L = {};
 
+const takeAll = take(Infinity);
+
 // 받아두었던 함수를 나중에 실행시키는 함수.
 // 인자를 하나만 받으면 일단 이후 인자들을 더 받기로 기다리는 상태의 함수가 됨.
 // 예를 들어 const mult3 = mult(3) 이렇게 하면 mult3은 나머지 하나의 인자를 받을 수 있는 함수가 되는 것
@@ -12,19 +14,11 @@ export const curry =
 // const mult = curry((a, b) => a * b);
 // log(mult(3, 4));
 // log(mult(3)(4));
-
-export const filter = curry((f, iter) => {
-  const res = [];
-  for (const a of iter) {
-    if (f(a)) res.push(a);
-  }
-
-  return res;
-});
-
 L.filter = curry(function* (f, iter) {
   for (const a of iter) if (f(a)) yield a;
 });
+
+export const filter = curry(pipe(L.filter, takeAll));
 
 export const reduce = curry((f, acc, iter) => {
   if (!iter) {
@@ -38,17 +32,11 @@ export const reduce = curry((f, acc, iter) => {
   return acc;
 });
 
-export const map = curry((f, iter) => {
-  const res = [];
-  for (const a of iter) {
-    res.push(f(a));
-  }
-  return res;
-});
-
 L.map = curry(function* (f, iter) {
   for (const a of iter) yield f(a);
 });
+
+export const map = curry(pipe(L.map, takeAll));
 
 // range와 지연된 range의 차이 : 배열과 이터레이터로 반환되는 것.
 // 지연된 range는 이터러블이 순회될 때서야 내부 로직이 실행된다. 배열을 만든다는 개념이 아니고 순회될때마다 값을 배출하는 방식.
