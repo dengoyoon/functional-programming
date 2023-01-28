@@ -125,3 +125,12 @@ L.deepFlat = function* f(iter) {
     else yield a;
   }
 };
+
+// map -> flatten
+// 기존의 flatMap은 Array만 지원, 지연성이 없음.
+L.flatMap = curry(pipe(L.map, L.flatten));
+// L.flatMap(map(a => a * a), [1, 2], 3, [4, 5, 6], [7, 8]); => [1, 4, 9, 16, 25, 36, 49, 64]
+
+const flatMap = curry(pipe(L.map, flatten));
+// flatMap(range, [1,2,3]) => [0, 0, 1, 0, 1, 2]
+// map(range, [1,2,3]) => [[0], [0, 1], [0, 1, 2]]
