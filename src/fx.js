@@ -111,10 +111,17 @@ export const find = curry((f, iter) =>
 
 L.flatten = function* (iter) {
   for (const a of iter) {
-    if (isIterable(a)) for (const b of a) yield b;
+    if (isIterable(a)) yield* a; //for (const b of a) yield b;
     else yield a;
   }
 };
 
 // 바로 평가되게 함수 구현.
 const flatten = pipe(L.flatten, takeAll);
+
+L.deepFlat = function* f(iter) {
+  for (const a of iter) {
+    if (isIterable(a)) yield* f(a);
+    else yield a;
+  }
+};
