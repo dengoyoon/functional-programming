@@ -52,9 +52,10 @@ export const take = curry((length, iter) => {
     res.push(a);
     if (res.length === length) return res;
   }
+  return res;
 });
 
-const takeAll = take(Infinity);
+export const takeAll = take(Infinity);
 
 export const filter = curry(pipe(L.filter, takeAll));
 
@@ -117,7 +118,7 @@ L.flatten = function* (iter) {
 };
 
 // 바로 평가되게 함수 구현.
-const flatten = pipe(L.flatten, takeAll);
+export const flatten = pipe(L.flatten, takeAll);
 
 L.deepFlat = function* f(iter) {
   for (const a of iter) {
@@ -131,6 +132,6 @@ L.deepFlat = function* f(iter) {
 L.flatMap = curry(pipe(L.map, L.flatten));
 // L.flatMap(map(a => a * a), [1, 2], 3, [4, 5, 6], [7, 8]); => [1, 4, 9, 16, 25, 36, 49, 64]
 
-const flatMap = curry(pipe(L.map, flatten));
+export const flatMap = curry(pipe(L.map, flatten));
 // flatMap(range, [1,2,3]) => [0, 0, 1, 0, 1, 2]
 // map(range, [1,2,3]) => [[0], [0, 1], [0, 1, 2]]
