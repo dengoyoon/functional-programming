@@ -29,7 +29,8 @@ const users = [
   { id: 3, name: "cc" },
 ];
 
-const getUserById = (id) => find((u) => u.id === id, users);
+const getUserById = (id) =>
+  find((u) => u.id === id, users) || Promise.reject("nothing!!");
 
 // '유저 데이터 받아옴 -> 이름만 추출' 을 하려고 다음과 같은 함수 두개를 준비함.
 const f = ({ name }) => name;
@@ -37,3 +38,12 @@ const g = getUserById;
 
 // const fg = id => f(g(id))
 // f(g(2))이렇게 했을때 당연히 문제없이 되지만 만약에 users의 값이 pop된다면? 에러가 발생하게 된다.
+
+const fg = (id) =>
+  Promise.resolve(id)
+    .then(g)
+    .then(f)
+    .catch((a) => a); // 에러시에는 reject상태의 Promise를 반환할 수 있게 함수를 구성하여 catch에서 걸릴 수 있게 구성
+// g에서 에러가 났을때 f(g(2)) 값과 g(2)는 nothing!!으로 같을 수 있게 된다
+
+fg(2).then(console.log);
