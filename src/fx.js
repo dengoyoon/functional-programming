@@ -59,16 +59,29 @@ export const takeAll = take(Infinity);
 
 export const filter = curry(pipe(L.filter, takeAll));
 
+const go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
+
 export const reduce = curry((f, acc, iter) => {
   if (!iter) {
     iter = acc[Symbol.iterator]();
     acc = iter.next().value;
   }
-  for (const a of iter) {
-    acc = f(acc, a);
+  // for (const a of iter) {
+  //   // acc = f(acc, a);
+  //   acc = acc instanceof Promise ? acc.then((acc) => f(acc, a)) : f(acc, a);
+  //   이렇게만 하면 불필요한 연산이 일어날 수 있음. 사실 무슨말인진 잘 모르겠음.....
+  // }
+
+  function recur(acc) {
+    for (const a of iter) {
+      acc = f(acc, a);
+      if (acc instanceof Promise) return acc.then(recur);
+      // recur를 다시 실행하지만 for문에서 사용하는 iter는 next()가 사용된 상태의 iter일 것.
+      // 그리고 iter는 클로저이다.
+    }
   }
 
-  return acc;
+  return go1(acc, recur);
 });
 
 L.map = curry(function* (f, iter) {
