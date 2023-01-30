@@ -17,6 +17,8 @@ export const go = (...args) => reduce((a, f) => f(a), args);
 go(0, a => a + 1, a => a + 10, a => a + 100, log);
 */
 
+const go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
+
 // pipe는 첫번째 함수의 인자가 여러개를 받아야 할 경우를 생각해서 다음과 같이 작성해야 함.
 export const pipe =
   (f, ...fs) =>
@@ -48,18 +50,31 @@ L.filter = curry(function* (f, iter) {
 // find함수의 경우엔 take 계열에 의한 결과 도출 함수라고 이해하면 된다.
 export const take = curry((length, iter) => {
   const res = [];
-  for (const a of iter) {
-    res.push(a);
-    if (res.length === length) return res;
+  iter = iter[Symbol.iterator]();
+
+  function recur() {
+    let cur;
+    while (!(cur = iter.next()).done) {
+      //for (const a of iter)
+      const a = cur.value;
+      if (a instanceof Promise)
+        return a.then((a) => {
+          res.push(a);
+          return res.length === length ? res : recur();
+        });
+
+      res.push(a);
+      if (res.length === length) return res;
+    }
+    return res;
   }
-  return res;
+
+  return recur();
 });
 
 export const takeAll = take(Infinity);
 
 export const filter = curry(pipe(L.filter, takeAll));
-
-const go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
 
 export const reduce = curry((f, acc, iter) => {
   if (!iter) {
@@ -85,7 +100,7 @@ export const reduce = curry((f, acc, iter) => {
 });
 
 L.map = curry(function* (f, iter) {
-  for (const a of iter) yield f(a);
+  for (const a of iter) yield go1(a, f);
 });
 
 export const map = curry(pipe(L.map, takeAll));
