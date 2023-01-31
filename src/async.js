@@ -1,6 +1,7 @@
 import { go, log } from "./fx.js";
 
 // go = (...args) => reduce((a, f) => f(a), args);
+log("TEST1");
 go(
   Promise.resolve(1), // 첫번째 값은 go1에서 then처리를 해줌
   (a) => a + 10,
@@ -11,14 +12,28 @@ go(
   log
 ).catch((e) => log(e));
 
-const delay = (a) =>
-  new Promise((resolve) => setTimeout(() => resolve(a), 1000));
+log("TEST2"); // TEST1과 동일한 코드. reduce가 then까지 실행한 프로미스를 계속 반환해서 동일한 코드이다.
+Promise.resolve(1)
+  .then((a) => a + 10)
+  .then((a) => Promise.resolve(a + 100))
+  .then((a) => a + 1000)
+  .then((a) => a + 10000)
+  .then((a) => Promise.resolve(a + 100000))
+  .then((a) => log(a))
+  .catch((e) => log(e));
 
-go(
+// Promise가 then안에서 연속으로 반환되면 안되지 않나?에 대한 해답.
+// => 어쨌든 then안에서는 원하는 값으로 평가된다.
+Promise.resolve(Promise.resolve(Promise.resolve(10))).then(log);
+
+const delay = (a) =>
+  new Promise((resolve) => setTimeout(() => resolve(a), 100));
+
+const a = go(
   delay(1),
   (a) => a + 10,
   (a) => delay(a + 100),
-  (a) => a + 1000,
+  (a) => delay(a + 1000),
   (a) => a + 10000,
   (a) => delay(a + 100000),
   log

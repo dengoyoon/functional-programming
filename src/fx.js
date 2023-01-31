@@ -4,6 +4,8 @@ export const L = {};
 
 const isIterable = (a) => a && a[Symbol.iterator];
 
+const nop = Symbol("nop");
+
 // 코드를 값으로 다루어 표현력을 높이기 위한 함수 go, pipe, curry
 
 /* 
@@ -42,7 +44,13 @@ export const curry =
 // log(mult(3)(4));
 
 L.filter = curry(function* (f, iter) {
-  for (const a of iter) if (f(a)) yield a;
+  for (const a of iter) {
+    const b = go1(a, f);
+    if (b instanceof Promise)
+      yield b.then((b) => (b ? a : Promise.reject(nop)));
+    // reject이지만 진짜 에러로 하고 싶지는 않아서 nop을 반환하였다.
+    else if (b) yield a;
+  }
 });
 
 // reduce와 take는 결과를 위한 함수라고 보면 된다.
@@ -57,12 +65,14 @@ export const take = curry((length, iter) => {
     while (!(cur = iter.next()).done) {
       //for (const a of iter)
       const a = cur.value;
-      if (a instanceof Promise)
-        return a.then((a) => {
-          res.push(a);
-          return res.length === length ? res : recur();
-        });
-
+      if (a instanceof Promise) {
+        return a
+          .then((a) => {
+            res.push(a);
+            return res.length === length ? res : recur();
+          })
+          .catch((err) => (err === nop ? recur() : Promise.reject(err)));
+      }
       res.push(a);
       if (res.length === length) return res;
     }
@@ -76,24 +86,41 @@ export const takeAll = take(Infinity);
 
 export const filter = curry(pipe(L.filter, takeAll));
 
+// const reduceF = (acc, a, f) =>
+//   a instanceof Promise
+//     ? a.then(
+//         (a) => f(acc, a),
+//         (e) => (e == nop ? acc : Promise.reject(e))
+//       )
+//     : f(acc, a);
+
+const reduceF = (acc, a, f) =>
+  a instanceof Promise
+    ? a.then(
+        (a) => f(acc, a),
+        (err) => (err == nop ? acc : Promise.reject(err)) // catch와 동일함.
+      )
+    : f(acc, a);
+
+const head = (iter) => go1(take(1, iter), ([h]) => h);
+
 export const reduce = curry((f, acc, iter) => {
-  if (!iter) {
-    iter = acc[Symbol.iterator]();
-    acc = iter.next().value;
-  }
-  // for (const a of iter) {
-  //   // acc = f(acc, a);
-  //   acc = acc instanceof Promise ? acc.then((acc) => f(acc, a)) : f(acc, a);
-  //   이렇게만 하면 불필요한 연산이 일어날 수 있음. 사실 무슨말인진 잘 모르겠음.....
+  // if (!iter) {
+  //   iter = acc[Symbol.iterator]();
+  //   acc = iter.next().value;
+  // } else {
+  //   iter = iter[Symbol.iterator]();
   // }
+  if (!iter) return reduce(f, head((iter = acc[Symbol.iterator]())), iter);
+  iter = iter[Symbol.iterator]();
 
   function recur(acc) {
-    for (const a of iter) {
-      acc = f(acc, a);
+    let cur;
+    while (!(cur = iter.next()).done) {
+      acc = reduceF(acc, cur.value, f);
       if (acc instanceof Promise) return acc.then(recur);
-      // recur를 다시 실행하지만 for문에서 사용하는 iter는 next()가 사용된 상태의 iter일 것.
-      // 그리고 iter는 클로저이다.
     }
+    return acc;
   }
 
   return go1(acc, recur);
