@@ -31,8 +31,9 @@ const delay = (a) =>
 const add = (a, b) => a + b;
 
 go(
-  [1, 2, 3, 4, 5],
-  L.map((a) => Promise.resolve(a * a)),
+  [1, 2, 3, 4, 5, 6, 7],
+  L.map((a) => delay(a * a)),
   L.filter((a) => Promise.resolve(a % 2)),
-  reduce(add)
+  take(2) // map에서 딜레이는 1 - 3까지만 실행된다.
+  // reduce(add)
 ).then((r) => log(r));
