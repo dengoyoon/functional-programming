@@ -1,6 +1,8 @@
 export const log = console.log;
 
-export const L = {};
+export const L = {}; // Lazy
+
+export const C = {}; // Concurrency
 
 const isIterable = (a) => a && a[Symbol.iterator];
 
@@ -125,6 +127,12 @@ export const reduce = curry((f, acc, iter) => {
 
   return go1(acc, recur);
 });
+
+C.reduce = curry((f, acc, iter) =>
+  iter
+    ? reduce(f, acc, [...iter]) // [...iter] 를 실행할때 전개하면서 비동기 코드가 동시에 실행된다.
+    : reduce(f, [...acc])
+);
 
 L.map = curry(function* (f, iter) {
   for (const a of iter) yield go1(a, f);
