@@ -198,3 +198,26 @@ L.flatMap = curry(pipe(L.map, L.flatten));
 export const flatMap = curry(pipe(L.map, flatten));
 // flatMap(range, [1,2,3]) => [0, 0, 1, 0, 1, 2]
 // map(range, [1,2,3]) => [[0], [0, 1], [0, 1, 2]]
+
+// For React Example
+
+const withHover = (ParamComponent) => {
+  // 무언가
+  return ParamComponent;
+};
+
+const withLogging = (ParamComponent) => {
+  // 무언가
+  return ParamComponent;
+};
+// React.forwardRef = (f) => 컴포넌트
+// const Button = React.forwardRef((props, ref) => 컴포넌트)
+const withForwardRef = (Component) =>
+  React.forwardRef((props, ref) => Component);
+
+/* ButtonComponent.js */
+function ButtonComponent() {
+  return;
+}
+
+// return go(ButtonComponent, withForwardRef, withHover, withLogging);
