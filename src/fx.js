@@ -201,6 +201,10 @@ export const flatMap = curry(pipe(L.map, flatten));
 
 // For React Example
 
+const Go = curry((component, ...hocs) =>
+  [component, ...hocs].reduce((a, hoc) => hoc(a))
+);
+
 const withHover = (ParamComponent) => {
   // 무언가
   return ParamComponent;
@@ -216,8 +220,8 @@ const withForwardRef = (Component) =>
   React.forwardRef((props, ref) => Component);
 
 /* ButtonComponent.js */
-function ButtonComponent() {
-  return;
-}
+const ButtonComponent = Go(jsx);
+
+// return ButtonComponent(withForwardRef, withHover, withLogging);
 
 // return go(ButtonComponent, withForwardRef, withHover, withLogging);
