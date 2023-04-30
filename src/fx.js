@@ -223,5 +223,3 @@ const withForwardRef = (Component) =>
 const ButtonComponent = Go(jsx);
 
 // return ButtonComponent(withForwardRef, withHover, withLogging);
-
-// return go(ButtonComponent, withForwardRef, withHover, withLogging);
